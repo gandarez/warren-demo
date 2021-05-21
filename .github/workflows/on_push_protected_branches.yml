@@ -49,16 +49,6 @@ jobs:
       - shell: bash
         run: |
           expr 3 + 7 > math.txt
-      - name: "Create Release"
-        uses: ncipollo/release-action@v1
-        with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          name: ${{ steps.semver-tag.outputs.semver_tag }}
-          tag: ${{ steps.semver-tag.outputs.semver_tag }}
-          body: ${{ steps.changelog.outputs.changelog }}
-          prerelease: ${{ steps.semver-tag.outputs.is_prerelease }}
-          draft: true
-          artifact: "math.txt"
       - name: "Create Tag" # Because draft release don't create the tag until it gets published
         uses: actions/github-script@v4
         with:
@@ -70,3 +60,13 @@ jobs:
               ref: "refs/tags/${{ steps.semver-tag.outputs.semver_tag }}",
               sha: context.sha
             })
+      - name: "Create Release"
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          name: ${{ steps.semver-tag.outputs.semver_tag }}
+          tag: ${{ steps.semver-tag.outputs.semver_tag }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          prerelease: ${{ steps.semver-tag.outputs.is_prerelease }}
+          draft: true
+          artifact: "math.txt"
