@@ -50,18 +50,12 @@ jobs:
         run: |
           expr 3 + 7 > math.txt
       - name: "Create Release"
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           name: ${{ steps.semver-tag.outputs.semver_tag }}
-          tag_name: ${{ steps.semver-tag.outputs.semver_tag }}
+          tag: ${{ steps.semver-tag.outputs.semver_tag }}
           body: ${{ steps.changelog.outputs.changelog }}
           prerelease: ${{ steps.semver-tag.outputs.is_prerelease }}
           draft: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-      - name: Upload release assets
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.semver-tag.outputs.semver_tag }}
-          file: math.txt
+          artifact: "math.txt"
