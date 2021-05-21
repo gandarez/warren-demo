@@ -53,6 +53,7 @@ jobs:
           tag_name: ${{ steps.semver-tag.outputs.semver_tag }}
           body: ${{ steps.changelog.outputs.changelog }}
           prerelease: ${{ steps.semver-tag.outputs.is_prerelease }}
+          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 

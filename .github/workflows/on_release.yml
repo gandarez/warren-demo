@@ -16,3 +16,9 @@ jobs:
         id: version
         run: echo ::set-output name=version::$(echo $GITHUB_REF | cut -d / -f 3)
       - run: echo "${{ steps.version.outputs.version }}"
+      - name: Update release
+        uses: meeDamian/github-release@2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.version.outputs.version }}
+          draft: false
