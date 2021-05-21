@@ -1,6 +1,5 @@
 on:
   release:
-    types: [published, released]
 
 env:
   GO_VERSION: "1.16"
