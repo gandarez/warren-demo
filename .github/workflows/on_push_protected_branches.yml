@@ -60,9 +60,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       - name: Upload release assets
-        uses: alexellis/upload-assets@0.2.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: svenstaro/upload-release-action@v2
         with:
-          asset_paths: '["./math.txt"]'
-
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.semver-tag.outputs.semver_tag }}
+          file: math.txt
