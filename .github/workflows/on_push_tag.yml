@@ -21,4 +21,6 @@ jobs:
         uses: meeDamian/github-release@2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
           allow_override: true
