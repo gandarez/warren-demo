@@ -59,3 +59,14 @@ jobs:
           prerelease: ${{ steps.semver-tag.outputs.is_prerelease }}
           draft: true
           artifact: "math.txt"
+      - name: "Create Tag" # Because draft release don't create the tag until it gets published
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          script: |
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ steps.semver-tag.outputs.semver_tag }}",
+              sha: context.sha
+            })
