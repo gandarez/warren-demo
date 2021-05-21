@@ -46,6 +46,9 @@ jobs:
           exclude: |
             ^Merge pull request .*
           debug: true
+      - shell: bash
+        run: |
+          expr 3 + 7 > math.txt
       - name: "Create Release"
         uses: softprops/action-gh-release@v1
         with:
@@ -56,4 +59,10 @@ jobs:
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - name: Upload release assets
+        uses: alexellis/upload-assets@0.2.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_paths: '["./math.txt"]'
 
