@@ -1,7 +1,5 @@
 on:
-  push:
-    tags:
-      - "v*"
+  release:
 
 env:
   GO_VERSION: "1.16"
@@ -17,10 +15,10 @@ jobs:
         id: version
         run: echo ::set-output name=version::$(echo $GITHUB_REF | cut -d / -f 3)
       - run: echo "${{ steps.version.outputs.version }}"
-      - name: Update release
-        uses: meeDamian/github-release@2.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.version.outputs.version }}
-          name: ${{ steps.version.outputs.version }}
-          allow_override: true
+      # - name: Update release
+      #   uses: meeDamian/github-release@2.0
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     tag: ${{ steps.version.outputs.version }}
+      #     name: ${{ steps.version.outputs.version }}
+      #     allow_override: true
