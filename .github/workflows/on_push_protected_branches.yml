@@ -48,25 +48,26 @@ jobs:
           debug: true
       - shell: bash
         run: |
-          expr 3 + 7 > math.txt
-      - name: "Create Tag" # Because draft release don't create the tag until it gets published
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          script: |
-            github.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/${{ steps.semver-tag.outputs.semver_tag }}",
-              sha: context.sha
-            })
+          mkdir release
+          expr 3 + 7 > ./release/math.txt
+      # - name: "Create Tag" # Because draft release don't create the tag until it gets published
+      #   uses: actions/github-script@v4
+      #   with:
+      #     github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+      #     script: |
+      #       github.git.createRef({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         ref: "refs/tags/${{ steps.semver-tag.outputs.semver_tag }}",
+      #         sha: context.sha
+      #       })
       - name: "Create Release"
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v1
         with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           name: ${{ steps.semver-tag.outputs.semver_tag }}
-          tag: ${{ steps.semver-tag.outputs.semver_tag }}
+          tag_name: ${{ steps.semver-tag.outputs.semver_tag }}
           body: ${{ steps.changelog.outputs.changelog }}
           prerelease: ${{ steps.semver-tag.outputs.is_prerelease }}
-          draft: true
-          artifact: "math.txt"
+          files: ./release/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
