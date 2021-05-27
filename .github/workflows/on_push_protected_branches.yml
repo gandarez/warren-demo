@@ -50,6 +50,12 @@ jobs:
         run: |
           mkdir release
           expr 3 + 7 > ./release/math.txt
+      - uses: jwalton/gh-find-current-pr@v1
+        id: changelog-release
+        name: Prepare changelog for release
+        shell: bash
+        run: |
+          sed -n '/changelog:/I,$p' ${{ steps.changelog-release.outputs.body }} | tail -n +3
       # - name: "Create Tag" # Because draft release don't create the tag until it gets published
       #   uses: actions/github-script@v4
       #   with:
@@ -66,7 +72,7 @@ jobs:
         with:
           name: ${{ steps.semver-tag.outputs.semver_tag }}
           tag_name: ${{ steps.semver-tag.outputs.semver_tag }}
-          body: ${{ steps.changelog.outputs.changelog }}
+          body: ${{ steps.changelog-release.outputs.body }}
           prerelease: ${{ steps.semver-tag.outputs.is_prerelease }}
           files: ./release/*
         env:
