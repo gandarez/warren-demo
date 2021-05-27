@@ -52,7 +52,7 @@ jobs:
           expr 3 + 7 > ./release/math.txt
       - uses: jwalton/gh-find-current-pr@v1
         id: changelog-release
-        name: Prepare changelog for release
+      - name: Prepare changelog for release
         shell: bash
         run: |
           sed -n '/changelog:/I,$p' ${{ steps.changelog-release.outputs.body }} | tail -n +3
