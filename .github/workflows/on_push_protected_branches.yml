@@ -50,7 +50,7 @@ jobs:
         run: |
           mkdir release
           expr 3 + 7 > ./release/math.txt
-      - uses: jwalton/gh-find-current-pr@v1
+      - uses: gandarez/gh-find-current-pr@v1
         id: changelog-release
       - name: Prepare changelog for release
         id: changelog-release-cleaned
