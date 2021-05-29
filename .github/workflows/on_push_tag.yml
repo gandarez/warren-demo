@@ -1,24 +1,24 @@
-on:
-  release:
+# on:
+#   release:
 
-env:
-  GO_VERSION: "1.16"
+# env:
+#   GO_VERSION: "1.16"
 
-jobs:
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: "Get the version"
-        id: version
-        run: echo ::set-output name=version::$(echo $GITHUB_REF | cut -d / -f 3)
-      - run: echo "${{ steps.version.outputs.version }}"
-      # - name: Update release
-      #   uses: meeDamian/github-release@2.0
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     tag: ${{ steps.version.outputs.version }}
-      #     name: ${{ steps.version.outputs.version }}
-      #     allow_override: true
+# jobs:
+#   deploy:
+#     name: Deploy
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v2
+#       - name: "Get the version"
+#         id: version
+#         run: echo ::set-output name=version::$(echo $GITHUB_REF | cut -d / -f 3)
+#       - run: echo "${{ steps.version.outputs.version }}"
+#       # - name: Update release
+#       #   uses: meeDamian/github-release@2.0
+#       #   with:
+#       #     token: ${{ secrets.GITHUB_TOKEN }}
+#       #     tag: ${{ steps.version.outputs.version }}
+#       #     name: ${{ steps.version.outputs.version }}
+#       #     allow_override: true
