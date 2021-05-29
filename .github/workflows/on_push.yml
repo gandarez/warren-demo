@@ -40,6 +40,8 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       -
         name: Calculate semver tag
         id: semver-tag
@@ -92,12 +94,12 @@ jobs:
       -
         name: Set version
         run: |
-          echo "SEMVER_TAG=$(head -1 version.txt)"
+          echo "SEMVER_TAG=$(head -1 version.txt)" >> $GITHUB_ENV
       -
         name: Build binaries
         shell: bash
         env:
-          VERSION: $(head -1 version.txt)
+          VERSION: $ {{ env.SEMVER_TAG }}
         run: make build-all
       -
         name: Upload artifacts
@@ -115,7 +117,7 @@ jobs:
             github.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/$SEMVER_TAG",
+              ref: "refs/tags/${{ env.SEMVER_TAG }}",
             })
 
   release:
@@ -145,7 +147,7 @@ jobs:
         id: changelog
         with:
           current_tag: ${{ github.sha }}
-          previous_tag: $ANCESTOR_TAG
+          previous_tag: $ {{ env.ANCESTOR_TAG }}
           exclude: |
             ^Merge pull request .*
       -
@@ -158,10 +160,10 @@ jobs:
         name: "Create release"
         uses: softprops/action-gh-release@master
         with:
-          name: $SEMVER_TAG
-          tag_name: $SEMVER_TAG
+          name: ${{ env.SEMVER_TAG }}
+          tag_name: ${{ env.SEMVER_TAG }}
           body: ${{ steps.changelog.outputs.changelog }}
-          prerelease: $SEMVER_TAG
+          prerelease: ${{ env.SEMVER_TAG }}
           target_commitish: ${{ github.sha }}
           draft: false
           files: ./build/*
@@ -177,5 +179,5 @@ jobs:
             github.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/$SEMVER_TAG",
+              ref: "refs/tags/${{ env.SEMVER_TAG }}",
             })
