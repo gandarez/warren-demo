@@ -138,9 +138,9 @@ jobs:
       -
         name: Set version
         run: |
-          echo "SEMVER_TAG=$(head -1 version.txt)"
-          echo "ANCESTOR_TAG=$(head -2 version.txt | tail -1)"
-          echo "IS_PRERELEASE=$(tails -1 version.txt)"
+          echo "SEMVER_TAG=$(head -1 version.txt)" >> $GITHUB_ENV
+          echo "ANCESTOR_TAG=$(head -2 version.txt | tail -1)" >> $GITHUB_ENV
+          echo "IS_PRERELEASE=$(tails -1 version.txt)" >> $GITHUB_ENV
       -
         name: Changelog
         uses: gandarez/changelog-action@v1.0.4
@@ -163,7 +163,7 @@ jobs:
           name: ${{ env.SEMVER_TAG }}
           tag_name: ${{ env.SEMVER_TAG }}
           body: ${{ steps.changelog.outputs.changelog }}
-          prerelease: ${{ env.SEMVER_TAG }}
+          prerelease: ${{ env.IS_PRERELEASE }}
           target_commitish: ${{ github.sha }}
           draft: false
           files: ./build/*
