@@ -45,8 +45,7 @@ jobs:
         id: semver-tag
         uses: wakatime/semver-action@v1.3.2
         with:
-          prerelease_id: alpha
-          main_branch_name: release
+          debug: true
       - name: Create tag
         uses: actions/github-script@v4
         with:
@@ -91,6 +90,10 @@ jobs:
         with:
           name: version.txt
       -
+        name: Set version
+        run: |
+          echo "SEMVER_TAG=$(head -1 version.txt)"
+      -
         name: Build binaries
         shell: bash
         env:
@@ -112,7 +115,7 @@ jobs:
             github.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/$(head -1 version.txt)",
+              ref: "refs/tags/$SEMVER_TAG",
             })
 
   release:
@@ -131,12 +134,18 @@ jobs:
         with:
           name: version.txt
       -
+        name: Set version
+        run: |
+          echo "SEMVER_TAG=$(head -1 version.txt)"
+          echo "ANCESTOR_TAG=$(head -2 version.txt | tail -1)"
+          echo "IS_PRERELEASE=$(tails -1 version.txt)"
+      -
         name: Changelog
         uses: gandarez/changelog-action@v1.0.4
         id: changelog
         with:
           current_tag: ${{ github.sha }}
-          previous_tag: $(head -2 version.txt | tail -1)
+          previous_tag: $ANCESTOR_TAG
           exclude: |
             ^Merge pull request .*
       -
@@ -149,10 +158,10 @@ jobs:
         name: "Create release"
         uses: softprops/action-gh-release@master
         with:
-          name: $(head -1 version.txt)
-          tag_name: $(head -1 version.txt)
+          name: $SEMVER_TAG
+          tag_name: $SEMVER_TAG
           body: ${{ steps.changelog.outputs.changelog }}
-          prerelease: $(tail -1 version.txt)
+          prerelease: $SEMVER_TAG
           target_commitish: ${{ github.sha }}
           draft: false
           files: ./build/*
@@ -168,5 +177,5 @@ jobs:
             github.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/$(head -1 version.txt)",
+              ref: "refs/tags/$SEMVER_TAG",
             })
