@@ -36,6 +36,10 @@ jobs:
     if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' }}
     runs-on: ubuntu-latest
     needs: [test]
+    outputs:
+      semver_tag: ${{ steps.semver-tag.outputs.semver_tag }}
+      ancestor_tag: ${{ steps.semver-tag.outputs.ancestor_tag }}
+      is_prerelease: ${{ steps.semver-tag.outputs.is_prerelease }}
     steps:
       -
         name: Checkout
@@ -59,18 +63,6 @@ jobs:
               ref: "refs/tags/${{ steps.semver-tag.outputs.semver_tag }}",
               sha: context.sha
             })
-      - 
-        shell: bash
-        run: |
-          echo ${{ steps.semver-tag.outputs.semver_tag }} > version.txt
-          echo ${{ steps.semver-tag.outputs.ancestor_tag }} >> version.txt
-          echo ${{ steps.semver-tag.outputs.is_prerelease }} >> version.txt
-      -
-        name: Upload version
-        uses: actions/upload-artifact@v2
-        with:
-          name: version.txt
-          path: version.txt
       - 
         name: Remove tag if failure
         if: ${{ failure() }}
@@ -99,19 +91,10 @@ jobs:
         with:
           go-version: "1.16"
       -
-        name: Download version
-        uses: actions/download-artifact@v2
-        with:
-          name: version.txt
-      -
-        name: Set version
-        run: |
-          echo "SEMVER_TAG=$(head -1 version.txt)" >> $GITHUB_ENV
-      -
         name: Build binaries
         shell: bash
         env:
-          VERSION: $ {{ env.SEMVER_TAG }}
+          VERSION: ${{ needs.version.outputs.semver_tag }}
         run: make build-all
       -
         name: Upload artifacts
@@ -129,13 +112,13 @@ jobs:
             github.git.deleteRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/${{ env.SEMVER_TAG }}",
+              ref: "refs/tags/${{ needs.version.outputs.semver_tag }}",
             })
 
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [version, build]
     steps:
       -
         name: "Checkout"
@@ -143,23 +126,12 @@ jobs:
         with:
           fetch-depth: 0
       -
-        name: Download version
-        uses: actions/download-artifact@v2
-        with:
-          name: version.txt
-      -
-        name: Set version
-        run: |
-          echo "SEMVER_TAG=$(head -1 version.txt)" >> $GITHUB_ENV
-          echo "ANCESTOR_TAG=$(head -2 version.txt | tail -1)" >> $GITHUB_ENV
-          echo "IS_PRERELEASE=$(tail -1 version.txt)" >> $GITHUB_ENV
-      -
         name: Changelog
         uses: gandarez/changelog-action@v1.0.4
         id: changelog
         with:
           current_tag: ${{ github.sha }}
-          previous_tag: ${{ env.ANCESTOR_TAG }}
+          previous_tag: ${{ needs.version.outputs.semver_tag }}
           exclude: |
             ^Merge pull request .*
       -
@@ -172,10 +144,10 @@ jobs:
         name: "Create release"
         uses: softprops/action-gh-release@master
         with:
-          name: ${{ env.SEMVER_TAG }}
-          tag_name: ${{ env.SEMVER_TAG }}
+          name: ${{ needs.version.outputs.semver_tag }}
+          tag_name: ${{ needs.version.outputs.semver_tag }}
           body: ${{ steps.changelog.outputs.changelog }}
-          prerelease: ${{ env.IS_PRERELEASE }}
+          prerelease: ${{ needs.version.outputs.is_prerelease }}
           target_commitish: ${{ github.sha }}
           draft: false
           files: ./build/*
@@ -191,5 +163,5 @@ jobs:
             github.git.deleteRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/${{ env.SEMVER_TAG }}",
+              ref: "refs/tags/${{ needs.version.outputs.semver_tag }}",
             })
