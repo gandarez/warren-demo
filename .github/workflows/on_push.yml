@@ -147,7 +147,7 @@ jobs:
         id: changelog
         with:
           current_tag: ${{ github.sha }}
-          previous_tag: $ {{ env.ANCESTOR_TAG }}
+          previous_tag: ${{ env.ANCESTOR_TAG }}
           exclude: |
             ^Merge pull request .*
       -
