@@ -152,7 +152,7 @@ jobs:
         run: |
           echo "SEMVER_TAG=$(head -1 version.txt)" >> $GITHUB_ENV
           echo "ANCESTOR_TAG=$(head -2 version.txt | tail -1)" >> $GITHUB_ENV
-          echo "IS_PRERELEASE=$(tails -1 version.txt)" >> $GITHUB_ENV
+          echo "IS_PRERELEASE=$(tail -1 version.txt)" >> $GITHUB_ENV
       -
         name: Changelog
         uses: gandarez/changelog-action@v1.0.4
