@@ -1,8 +1,9 @@
 on:
   push:
-    branches-ignore:
-      - "develop"
-      - "master"
+    branches:
+      - "**"
+    tags-ignore:
+      - "**"
 
 env:
   GO_VERSION: "1.16"
