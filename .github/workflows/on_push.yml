@@ -134,7 +134,7 @@ jobs:
         name: Prepare changelog
         run: |
           body="${{ fromJson(steps.pr.outputs.pr).body }}"
-          echo "changelog=$(awk 'f;/Changelog:/{f=1}')" >> $GITHUB_ENV
+          echo "changelog=$(awk 'f;/Changelog:/{f=1}' <<< $body)" >> $GITHUB_ENV
       -
         name: Download artifacts
         uses: actions/download-artifact@v2
