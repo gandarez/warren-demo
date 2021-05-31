@@ -136,6 +136,7 @@ jobs:
         shell: bash
         run: |
           body="${{ fromJson(steps.pr.outputs.pr).body }}"
+          body="$(awk 'f;/Changelog:/{f=1}' <<< $body)"
           body="${body//'%'/'%25'}"
           body="${body//$'\n'/'%0A'}"
           body="${body//$'\r'/'%0D'}"
