@@ -132,9 +132,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - 
         name: Prepare changelog
+        id: changelog
         run: |
           body="${{ fromJson(steps.pr.outputs.pr).body }}"
-          echo "changelog=\"$(awk 'f;/Changelog:/{f=1}' <<< $body)\"" >> $GITHUB_ENV
+          echo '::set-output name=changelog::${ $body }'
       -
         name: Download artifacts
         uses: actions/download-artifact@v2
@@ -147,7 +148,7 @@ jobs:
         with:
           name: ${{ needs.version.outputs.semver_tag }}
           tag_name: ${{ needs.version.outputs.semver_tag }}
-          body: ${{ env.changelog }}
+          body: ${{ steps.changelog.outputs.changelog }}
           prerelease: ${{ needs.version.outputs.is_prerelease }}
           target_commitish: ${{ github.sha }}
           draft: false
