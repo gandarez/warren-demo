@@ -135,7 +135,7 @@ jobs:
         id: changelog
         run: |
           body="${{ fromJson(steps.pr.outputs.pr).body }}"
-          echo '::set-output name=changelog::${ $body }'
+          echo '::set-output name=changelog::$body'
       -
         name: Download artifacts
         uses: actions/download-artifact@v2
