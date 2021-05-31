@@ -140,6 +140,7 @@ jobs:
           body="${body//'%'/'%25'}"
           body="${body//$'\n'/'%0A'}"
           body="${body//$'\r'/'%0D'}"
+          body="## Changelog\n$body"
           echo "::set-output name=changelog::$body"
       -
         name: Download artifacts
