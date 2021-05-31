@@ -127,15 +127,14 @@ jobs:
           fetch-depth: 0
       - 
         uses: 8BitJonny/gh-get-current-pr@1.1.0
-        id: PR
+        id: pr
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - 
-        run: echo "Your PR is ${prNumber} and its JSON is ${prJSON}"
-        if: success() && steps.PR.outputs.number
-        env:
-          prNumber: ${{ steps.PR.outputs.number }}
-          prJSON: ${{ steps.PR.outputs.pr }}
+        name: Prepare changelog
+        run: |
+          body="${{ fromJson(steps.pr.outputs.pr).body }}"
+          echo "changelog=${{ awk 'f;/Changelog:/{f=1}' }}" >> $GITHUB_ENV
       -
         name: Download artifacts
         uses: actions/download-artifact@v2
@@ -148,7 +147,7 @@ jobs:
         with:
           name: ${{ needs.version.outputs.semver_tag }}
           tag_name: ${{ needs.version.outputs.semver_tag }}
-          body: ${{ steps.PR.outputs.pr }}
+          body: ${{ env.changelog }}
           prerelease: ${{ needs.version.outputs.is_prerelease }}
           target_commitish: ${{ github.sha }}
           draft: false
