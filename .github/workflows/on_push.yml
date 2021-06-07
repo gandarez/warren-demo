@@ -63,18 +63,6 @@ jobs:
               ref: "refs/tags/${{ steps.semver-tag.outputs.semver_tag }}",
               sha: context.sha
             })
-      - 
-        name: Remove tag if failure
-        if: ${{ failure() }}
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ github.token }}
-          script: |
-            github.git.deleteRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/${{ steps.semver-tag.outputs.semver_tag }}",
-            })
   
   build:
     name: Build
@@ -112,7 +100,7 @@ jobs:
             github.git.deleteRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/${{ needs.version.outputs.semver_tag }}",
+              ref: "tags/${{ needs.version.outputs.semver_tag }}",
             })
 
   release:
@@ -146,7 +134,7 @@ jobs:
         name: Prepare changelog
         id: changelog
         run: |
-          changelog=${{ steps.changelog-develop.outputs.changelog || fromJson(steps.changelog-release.outputs.changelog).body }}
+          changelog="${{ steps.changelog-develop.outputs.changelog || fromJson(steps.changelog-release.outputs.changelog).body }}"
           ./bin/prepare_changelog.sh $(echo ${ github.ref#refs/heads/ }) "$changelog"
       -
         name: Download artifacts
@@ -177,7 +165,7 @@ jobs:
             github.git.deleteRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/${{ needs.version.outputs.semver_tag }}",
+              ref: "tags/${{ needs.version.outputs.semver_tag }}",
             })
       -
         name: "Slack notification"
