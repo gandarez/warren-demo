@@ -129,7 +129,7 @@ jobs:
         if: ${{ github.ref == 'refs/heads/develop' }}
         name: Changelog for develop
         uses: gandarez/changelog-action@v1.0.4
-        id: changelog
+        id: changelog-develop
         with:
           current_tag: ${{ github.sha }}
           previous_tag: ${{ needs.version.outputs.ancestor_tag }}
@@ -137,24 +137,17 @@ jobs:
             ^Merge pull request .*
       -
         if: ${{ github.ref == 'refs/heads/master' }}
-        name: Changelog for master (stable version)
+        name: Get related pull request
         uses: 8BitJonny/gh-get-current-pr@1.1.0
-        id: pr
+        id: changelog-release
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - 
-        if: ${{ github.ref == 'refs/heads/master' }}
+      -
         name: Prepare changelog
-        id: changelog-pr
-        shell: bash
+        id: changelog
         run: |
-          body="${{ fromJson(steps.pr.outputs.pr).body }}"
-          body="$(awk 'f;/Changelog:/{f=1}' <<< $body)"
-          body="${body//'%'/'%25'}"
-          body="${body//$'\n'/'%0A'}"
-          body="${body//$'\r'/'%0D'}"
-          body="## Changelog%0A$body"
-          echo "::set-output name=changelog::$body"
+          changelog=${{ steps.changelog-develop.outputs.changelog || fromJson(steps.changelog-release.outputs.changelog).body }}
+          ./bin/prepare_changelog.sh $(echo ${{ github.ref#refs/heads/ }}) "$changelog"
       -
         name: Download artifacts
         uses: actions/download-artifact@v2
@@ -167,7 +160,7 @@ jobs:
         with:
           name: ${{ needs.version.outputs.semver_tag }}
           tag_name: ${{ needs.version.outputs.semver_tag }}
-          body: ${{ steps.changelog.outputs.changelog || steps.changelog-pr.outputs.changelog }}
+          body: "## Changelog%0A${{ steps.changelog.outputs.changelog || steps.changelog-pr.outputs.changelog }}"
           prerelease: ${{ needs.version.outputs.is_prerelease }}
           target_commitish: ${{ github.sha }}
           draft: false
@@ -210,7 +203,7 @@ jobs:
                   elements: [
                     {
                       type: 'mrkdwn',
-                      text: `${{ steps.changelog.outputs.changelog || steps.changelog-pr.outputs.changelog }}`
+                      text: `${{ steps.changelog.outputs.changelog }}`
                     }
                   ]
                 }
