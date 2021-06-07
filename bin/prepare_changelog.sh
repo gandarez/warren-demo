@@ -31,7 +31,7 @@ slack_output_for_develop() {
     do
         hash=${j:0:7}
         link="<https://github.com/wakatime/wakatime-cli/commit/$hash|$hash>"
-        temp=$temp$(echo "$j" | awk '{printf "<https://github.com/wakatime/wakatime-cli/commit/"$1"|"$1">";$1=""; printf "%s\\n",$0 }')
+        temp="$temp$(echo "$j" | awk '{printf "<https://github.com/wakatime/wakatime-cli/commit/"$1"|"$1">";$1=""; print $0 }')\n"
     done
 
     slack=$(echo -e "*Changelog*\n$temp")
