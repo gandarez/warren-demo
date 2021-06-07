@@ -16,18 +16,15 @@ clean_up() {
     changelog="${changelog//\`/}"
     changelog="${changelog//\'/}"
     changelog="${changelog//\"/}"
+}
+
+replace_for_release() {
     changelog="${changelog//'%'/'%25'}"
     changelog="${changelog//$'\n'/'%0A'}"
     changelog="${changelog//$'\r'/'%0D'}"
 }
 
-# replace_for_master() {
-#     changelog="${changelog//'%'/'%25'}"
-#     changelog="${changelog//$'\n'/'%0A'}"
-#     changelog="${changelog//$'\r'/'%0D'}"
-# }
-
-slack_output() {
+slack_output_for_develop() {
     local IFS=$'\n' # make newlines the only separator
     local temp=
     for j in $(echo "$changelog")
@@ -40,17 +37,26 @@ slack_output() {
     slack=$(echo -e "*Changelog*\n$temp")
 }
 
-process_for_develop() {
+parse_for_develop() {
     changelog=$(awk 'f;/## Changelog/{f=1}' <<< "$changelog")
 }
 
-process_for_master() {
+parse_for_release() {
     changelog=$(awk 'f;/Changelog:/{f=1}' <<< "$changelog")
 }
 
 case $branch in
-    develop) process_for_develop slack_output clean_up ;;
-    master) process_for_master slack_output clean_up ;;
+    develop) 
+        parse_for_develop
+        slack_output_for_develop
+        clean_up
+        ;;
+    master)
+        parse_for_release
+        slack=$(echo -e "*Changelog*\n$changelog")
+        clean_up
+        replace_for_release
+        ;;
     *) exit 1 ;;
 esac
 
