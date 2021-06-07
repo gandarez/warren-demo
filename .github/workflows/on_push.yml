@@ -197,8 +197,11 @@ jobs:
             {
               username: 'WakaTime Bot',
               icon_emoji: ':mega:',
-              text: `New <https://github.com/wakatime/wakatime-cli|wakatime-cli> version <https://github.com/wakatime/wakatime-cli/releases/tag/${{ needs.version.outputs.semver_tag }}|${{ needs.version.outputs.semver_tag }}> released`,
               blocks: [
+                {
+                  type: 'section',
+                  text: `New <https://github.com/wakatime/wakatime-cli|wakatime-cli> version <https://github.com/wakatime/wakatime-cli/releases/tag/${{ needs.version.outputs.semver_tag }}|${{ needs.version.outputs.semver_tag }}> released`
+                },
                 {
                   type: 'context',
                   elements: [
