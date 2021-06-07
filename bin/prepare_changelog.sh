@@ -48,8 +48,8 @@ parse_for_release() {
 case $branch in
     develop) 
         parse_for_develop
-        clean_up
         slack_output_for_develop
+        clean_up
         replace_for_release
         ;;
     master)
