@@ -148,7 +148,7 @@ jobs:
         with:
           name: ${{ needs.version.outputs.semver_tag }}
           tag_name: ${{ needs.version.outputs.semver_tag }}
-          body: "## Changelog%0A${{ steps.changelog.outputs.changelog || steps.changelog-pr.outputs.changelog }}"
+          body: "## Changelog\n${{ steps.changelog.outputs.changelog }}"
           prerelease: ${{ needs.version.outputs.is_prerelease }}
           target_commitish: ${{ github.sha }}
           draft: false
@@ -191,7 +191,7 @@ jobs:
                   elements: [
                     {
                       type: 'mrkdwn',
-                      text: `${{ steps.changelog.outputs.changelog }}`
+                      text: `${{ steps.changelog.outputs.slack }}`
                     }
                   ]
                 }
