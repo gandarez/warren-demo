@@ -48,13 +48,14 @@ parse_for_release() {
 case $branch in
     develop) 
         parse_for_develop
-        slack_output_for_develop
         clean_up
+        slack_output_for_develop
+        replace_for_release
         ;;
     master)
         parse_for_release
-        slack=$(echo -e "*Changelog*\n$changelog")
         clean_up
+        slack=$(echo -e "*Changelog*\n$changelog")
         replace_for_release
         ;;
     *) exit 1 ;;
