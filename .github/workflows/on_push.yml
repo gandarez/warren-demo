@@ -203,7 +203,7 @@ jobs:
                   elements: [
                     {
                       type: 'mrkdwn',
-                      text: `New <https://github.com/wakatime/wakatime-cli|wakatime-cli> version <https://github.com/wakatime/wakatime-cli/releases/tag/${{ needs.version.outputs.semver_tag }}|${{ needs.version.outputs.semver_tag }}> released\n\n${{ steps.changelog-develop.outputs.changelog || steps.changelog-release.outputs.changelog }}`
+                      text: `New <https://github.com/wakatime/wakatime-cli|wakatime-cli> version <https://github.com/wakatime/wakatime-cli/releases/tag/${{ needs.version.outputs.semver_tag }}|${{ needs.version.outputs.semver_tag }}> released\n\n${{ steps.changelog.outputs.changelog || steps.changelog-pr.outputs.changelog }}`
                     }
                   ]
                 }
