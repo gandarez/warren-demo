@@ -16,13 +16,16 @@ clean_up() {
     changelog="${changelog//\`/}"
     changelog="${changelog//\'/}"
     changelog="${changelog//\"/}"
-}
-
-replace_for_master() {
     changelog="${changelog//'%'/'%25'}"
     changelog="${changelog//$'\n'/'%0A'}"
     changelog="${changelog//$'\r'/'%0D'}"
 }
+
+# replace_for_master() {
+#     changelog="${changelog//'%'/'%25'}"
+#     changelog="${changelog//$'\n'/'%0A'}"
+#     changelog="${changelog//$'\r'/'%0D'}"
+# }
 
 slack_output() {
     local IFS=$'\n' # make newlines the only separator
@@ -46,12 +49,10 @@ process_for_master() {
 }
 
 case $branch in
-    develop) process_for_develop clean_up ;;
-    master) process_for_master clean_up replace_for_master ;;
+    develop) process_for_develop slack_output clean_up ;;
+    master) process_for_master slack_output clean_up ;;
     *) exit 1 ;;
 esac
-
-slack_output
 
 echo "::set-output name=changelog::$changelog"
 echo "::set-output name=slack::$slack"
