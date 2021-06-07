@@ -147,7 +147,7 @@ jobs:
         id: changelog
         run: |
           changelog=${{ steps.changelog-develop.outputs.changelog || fromJson(steps.changelog-release.outputs.changelog).body }}
-          ./bin/prepare_changelog.sh $(echo ${{ github.ref#refs/heads/ }}) "$changelog"
+          ./bin/prepare_changelog.sh $(echo ${ github.ref#refs/heads/ }) "$changelog"
       -
         name: Download artifacts
         uses: actions/download-artifact@v2
