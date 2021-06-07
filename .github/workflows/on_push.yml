@@ -186,3 +186,28 @@ jobs:
               repo: context.repo.repo,
               ref: "refs/tags/${{ needs.version.outputs.semver_tag }}",
             })
+      -
+        name: "Slack notification"
+        uses: 8398a7/action-slack@v3
+        if: ${{ success() }}
+        with:
+          status: custom
+          fields: message
+          custom_payload: |
+            {
+              username: 'WakaTime Bot',
+              icon_emoji: ':mega:',
+              blocks: [
+                {
+                  type: 'context',
+                  elements: [
+                    {
+                      type: 'mrkdwn',
+                      text: `New <https://github.com/wakatime/wakatime-cli|wakatime-cli> version <https://github.com/wakatime/wakatime-cli/releases/tag/${{ needs.version.outputs.semver_tag }}|${{ needs.version.outputs.semver_tag }}> released\n\n${{ steps.changelog-develop.outputs.changelog || steps.changelog-release.outputs.changelog }}`
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
