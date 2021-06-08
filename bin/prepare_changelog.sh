@@ -61,5 +61,8 @@ case $branch in
     *) exit 1 ;;
 esac
 
+echo "changelog:${changelog}"
+echo "slack:${slack}"
+
 echo "::set-output name=changelog::${changelog}"
 echo "::set-output name=slack::${slack}"
