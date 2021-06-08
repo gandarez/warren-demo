@@ -34,7 +34,7 @@ slack_output_for_develop() {
         temp="${temp}$(echo "$j" | awk '{printf "<https://github.com/wakatime/wakatime-cli/commit/"$1"|"$1">";$1=""; print $0 }')\n"
     done
 
-    slack=$(echo -e "*Changelog*\n${temp}")
+    slack=$(echo "*Changelog*\n${temp}")
 }
 
 parse_for_develop() {
@@ -55,7 +55,7 @@ case $branch in
     master)
         parse_for_release
         clean_up
-        slack=$(echo -e "*Changelog*\n${changelog}")
+        slack=$(echo "*Changelog*\n${changelog}")
         replace_for_release
         ;;
     *) exit 1 ;;
