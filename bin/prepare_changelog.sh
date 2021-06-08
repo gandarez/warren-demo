@@ -28,16 +28,16 @@ slack_output_for_develop() {
     echo "(start) slack for develop"
     local IFS=$'\n' # make newlines the only separator
     local temp=
-    for j in $(echo "$changelog")
+    for j in $(echo "${changelog}")
     do
         echo "$j"
         hash=${j:0:7}
-        link="<https://github.com/wakatime/wakatime-cli/commit/$hash|$hash>"
-        temp="{$temp}$(echo "$j" | awk '{printf "<https://github.com/wakatime/wakatime-cli/commit/"$1"|"$1">";$1=""; print $0 }')\n"
+        link="<https://github.com/wakatime/wakatime-cli/commit/${hash}|${hash}>"
+        temp="${temp}$(echo "$j" | awk '{printf "<https://github.com/wakatime/wakatime-cli/commit/"$1"|"$1">";$1=""; print $0 }')\n"
     done
 
     echo "(finish) slack for develop"
-    slack=$(echo -e "*Changelog*\n$temp")
+    slack=$(echo -e "*Changelog*\n${temp}")
 }
 
 parse_for_develop() {
@@ -58,11 +58,11 @@ case $branch in
     master)
         parse_for_release
         clean_up
-        slack=$(echo -e "*Changelog*\n$changelog")
+        slack=$(echo -e "*Changelog*\n${changelog}")
         replace_for_release
         ;;
     *) exit 1 ;;
 esac
 
-echo "::set-output name=changelog::$changelog"
-echo "::set-output name=slack::$slack"
+echo "::set-output name=changelog::${changelog}"
+echo "::set-output name=slack::${slack}"
