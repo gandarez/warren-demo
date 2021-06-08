@@ -191,7 +191,7 @@ jobs:
                   elements: [
                     {
                       type: 'mrkdwn',
-                      text: '${{ steps.changelog.outputs.slack }}'
+                      text: `${{ steps.changelog.outputs.slack }}`
                     }
                   ]
                 }
